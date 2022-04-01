@@ -9,13 +9,30 @@
 <body>
     
     <avatar-icon size="small">U</avatar-icon>
-    <avatar-icon>U</avatar-icon>
-    <avatar-icon size="large">U</avatar-icon>
+    <button onclick="changeSize()">Toggle my size</button>
+    <button onclick="changeShape()">Toggle my shape</button>
 
-    <avatar-icon shape="square" size="small">U</avatar-icon>
-    <avatar-icon shape="square">U</avatar-icon>
-    <avatar-icon shape="square" size="large">U</avatar-icon>
+    <script>
+        function changeSize(){
+            const AvatarIcon = document.querySelector('avatar-icon');
+            const currentAttr = AvatarIcon.getAttribute('size');
+            AvatarIcon.setAttribute('size', 
+                (currentAttr === 'large')
+                ? 'small'
+                : 'large'
+            );
+        }
 
+        function changeShape(){
+            const AvatarIcon = document.querySelector('avatar-icon');
+            const currentAttr = AvatarIcon.getAttribute('shape');
+            AvatarIcon.setAttribute('shape',
+                (currentAttr === 'square')
+                ? ''
+                : 'square'
+            );
+        }
+    </script>
     <script src="web-components-ej1.js"></script>
 </body>
 </html>
