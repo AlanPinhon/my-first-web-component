@@ -1,45 +1,30 @@
 class Avatar extends HTMLElement {
     constructor(){
         super();
+        Recuerda que el constructor es para setear valores iniciales
+        Si bien esto funciona, ese mismo trabajo ya se está haciendo en el
+        attributeChangedCallback. ya que el método observedAttributes está 
+        escuchando cada cambio de los atributos asignados en el array.
+        //
+        // let sizeAvatar = this.getAttribute('size');
+        // (sizeAvatar) ? this.size = this.sizeAvatar : this.size = 'default';
 
-        let sizeAvatar = this.getAttribute('size');
-        (sizeAvatar) ? this.size = this.sizeAvatar : this.size = 'default';
 
+        this.size = 'default';
+        this.shape = null;
         this.attachShadow({mode:'open'});
+        this.shadowRoot.innerHTML = this.AvatarTemplate(); //Esto ya retorna un string, no es necesario volverlo a castear.
     }
 
     static get observedAttributes(){
-        return['size','shape'];
+        return['size', 'shape'];
     }
 
-    connectedCallback() {
-        this.shadowRoot.innerHTML = `
-            ${this.AvatarTemplate()}
-        `;
-    }
+    // Ahora que se refactorizó, no hay nada que hacer dentro del connectedCallback
+    // Se puede quitar.
+    // connectedCallback() {}
 
-    get shape (){
-        return this.hasAttribute('shape');
-    }
-
-    set shape (value) {
-        if(value){
-            this.setAttribute('shape', '');
-            this.shadowRoot.querySelector('div').classList.add('square');
-        } else {
-            this.removeAttribute('shape');
-            this.shadowRoot.querySelector('div').classList.remove('square');
-        }
-    }
-
-    AvatarTemplate(){
-
-        let shapeClass = `${this.size} `;
-        
-        if(this.shape){
-            shapeClass += 'square';
-        }
-
+    AvatarTemplate() {
         return `
             <style>
                 div{
@@ -73,19 +58,21 @@ class Avatar extends HTMLElement {
                 }
             </style>
 
-            <div class="${shapeClass}">
-                
+            <div class="${this.size} ${this.shape || ''}">
                 <slot></slot>
             </div>
         `   
     }
 
 
-    attributeChangedCallback(name, oldVal, newVal){
-        if(name === 'size' && oldVal !== newVal){
-            this.size = newVal;
-            this.shadowRoot.innerHTML = `${this.AvatarTemplate()}`
-        }
+    attributeChangedCallback(name, _, newVal){
+        console.log(name, newVal);
+        // Creo que para este tipo de componentes en donde sólo reciben valores
+        // para después mostrarlos simplementa bastaría con inyectar el name de la
+        // propiedad como key del objeto (en este caso this) y setearle el nuevo valor
+        // No hay necesidad de hacer condicionales ni tampoco de hacer getters y setters.
+        this[name] = newVal; 
+        this.shadowRoot.innerHTML = `${this.AvatarTemplate()}` //Refrescamos los estilos, good.
     }
 };
 
