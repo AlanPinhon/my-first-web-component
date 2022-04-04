@@ -2,44 +2,18 @@ class Avatar extends HTMLElement {
     constructor(){
         super();
 
-        let sizeAvatar = this.getAttribute('size');
-        (sizeAvatar) ? this.size = this.sizeAvatar : this.size = 'default';
-
+        this.size = 'default';
+        this.shape = null;
+        this.src = null;
         this.attachShadow({mode:'open'});
+        this.shadowRoot.innerHTML = this.AvatarTemplate();
     }
 
     static get observedAttributes(){
-        return['size','shape'];
-    }
-
-    connectedCallback() {
-        this.shadowRoot.innerHTML = `
-            ${this.AvatarTemplate()}
-        `;
-    }
-
-    get shape (){
-        return this.hasAttribute('shape');
-    }
-
-    set shape (value) {
-        if(value){
-            this.setAttribute('shape', '');
-            this.shadowRoot.querySelector('div').classList.add('square');
-        } else {
-            this.removeAttribute('shape');
-            this.shadowRoot.querySelector('div').classList.remove('square');
-        }
+        return['size', 'shape'];
     }
 
     AvatarTemplate(){
-
-        let shapeClass = `${this.size} `;
-        
-        if(this.shape){
-            shapeClass += 'square';
-        }
-
         return `
             <style>
                 div{
@@ -73,19 +47,17 @@ class Avatar extends HTMLElement {
                 }
             </style>
 
-            <div class="${shapeClass}">
+            <div class="${this.size} ${this.shape || '' } ${this.src || '' }">
                 
                 <slot></slot>
             </div>
-        `   
+        `  
     }
 
 
     attributeChangedCallback(name, oldVal, newVal){
-        if(name === 'size' && oldVal !== newVal){
-            this.size = newVal;
-            this.shadowRoot.innerHTML = `${this.AvatarTemplate()}`
-        }
+        this[name] = newVal;
+        this.shadowRoot.innerHTML = `${this.AvatarTemplate()}`
     }
 };
 
