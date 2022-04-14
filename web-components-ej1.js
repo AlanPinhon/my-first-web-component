@@ -20,7 +20,7 @@ class Avatar extends HTMLElement {
             <style>
                 div{
                     display: flex;
-                    margin: 1rem;
+                    margin: 0;
                     color: #fff;
                     background-color: #aaa;
                     border-radius: 50%;
@@ -30,6 +30,7 @@ class Avatar extends HTMLElement {
                     background-size: ${(this.src) ? 'cover' : '40%'};
                     background-repeat: no-repeat;
                     background-position: center;
+                    position: relative;
                 }
                 .default{
                     width: 3rem;
@@ -51,7 +52,6 @@ class Avatar extends HTMLElement {
                 }
                 .avatar-icon{
                     width: 2rem;
-                    
                     background-repeat: no-repeat;
                 }
             </style>
@@ -65,7 +65,7 @@ class Avatar extends HTMLElement {
 
     attributeChangedCallback(name, oldVal, newVal){
         this[name] = newVal;       
-        this.shadowRoot.innerHTML = `${this.AvatarTemplate()}`
+        this.shadowRoot.innerHTML = this.AvatarTemplate();
     }
 };
 
@@ -73,34 +73,54 @@ class Badge extends HTMLElement{
     constructor(){
         super();
 
-        this.dot = null;
-
         this.attachShadow({mode:'open'});
         this.shadowRoot.innerHTML = this.BadgeTemplate();
     }
 
     static get observedAttributes(){
-        return['dot'];
+        return['dot', 'count'];
     }
 
     BadgeTemplate(){
+        const count = this.getAttribute('count');
+        const dot = this.getAttribute('dot');
+            
+        if(!dot && !count) return '<slot></slot>';
+
+        if(dot) this.removeAttribute('count');
+        
         return `
             <style>
+                #container{
+                    display: inline-block;
+                    position: relative;
+                }
                 .dot{
-                    width: .5rem;
-                    height: .5rem;
+                    display: flex;
+                    position: absolute;
+                    background-color: #f00;
+                    width: ${(count) ? '1.25rem' : '.4rem'};
+                    height: ${(count) ? '1.25rem' : '.4rem'};
                     border: 1px solid #fff;
                     border-radius: 50%;
-                    background-color: #f00;
+                    top: ${(count) ? '-.5rem' : '-.2rem'};
+                    right: ${(count) ? '-.5rem' : '-.2rem'};
+                    z-index: 100;
+                    align-items: center;
+                    justify-content: center;
+                    color: #fff;
+                    font-size: .8rem;
                 }
             </style>
-            <div class="${this.dot || ''}"></div>
+            <span id="container">
+                <span class="dot">${(count > 99) ? '+99' : count || ''}</span>
+                <slot></slot>
+            </span>
         `
     }
 
-    attributeChangedCallback(name, oldVal, newVal){
-        this[name] = newVal;       
-        this.shadowRoot.innerHTML = `${this.BadgeTemplate()}`
+    attributeChangedCallback(name, oldVal, newVal){       
+        this.shadowRoot.innerHTML = this.BadgeTemplate()
     }
 }
 
