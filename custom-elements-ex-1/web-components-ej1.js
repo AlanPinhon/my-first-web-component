@@ -1,11 +1,25 @@
+import {randomUser} from '../API.js';
+
+const getInfoUser = async () => {
+    const Avatar = await randomUser();
+
+    const newAvatar = document.querySelector('#example-1');
+    newAvatar.setAttribute('src', Avatar.results[0].picture.large);
+}
+
+getInfoUser();
+
+
+
+
 class Avatar extends HTMLElement {
     constructor(){
         super();
 
         this.size = 'default';
         this.shape = null;
-        this.src = '';
-        this.icon = '';
+        this.src = null;
+        this.icon = null;
         this.attachShadow({mode:'open'});
         this.shadowRoot.innerHTML = this.AvatarTemplate();
     }
@@ -83,7 +97,7 @@ class Badge extends HTMLElement{
 
     BadgeTemplate(){
         const count = this.getAttribute('count');
-        const dot = this.getAttribute('dot');
+        const dot = this.hasAttribute('dot');
             
         if(!dot && !count) return '<slot></slot>';
 
@@ -119,7 +133,7 @@ class Badge extends HTMLElement{
         `
     }
 
-    attributeChangedCallback(name, oldVal, newVal){       
+    attributeChangedCallback(){       
         this.shadowRoot.innerHTML = this.BadgeTemplate()
     }
 }
