@@ -12,21 +12,31 @@ export class HeadingText extends HTMLElement{
     HeadingTemplate(){
         return `
             <style>
-                .title{
-                    font-size: 1.1rem;
-                    color: #888;
-                    margin: 0;
-                }
-                .info-text{
-                    font-size: 2.38rem;
-                    color: #2c2e31;
-                    margin: .31rem;
-                }
+            h1{
+                font-family: system-ui;
+                font-weight: 700;
+                color: #2c2e31;
+                margin: 0;
+            }
+
+            h2{
+                font-family: system-ui;
+                font-weight: 500;
+                color: #2c2e31;
+                margin: 0;
+            }
+
+            h3{
+                font-family: system-ui;
+                font-weight: 400;
+                color: #888;
+                margin: 0;
+            }
             </style>
 
-            <p class="${this.getAttribute('type')}">
+            <h${this.getAttribute('type')}>
                 <slot></slot>
-            </p>
+            </h${this.getAttribute('type')}>
             
         `;
     }
